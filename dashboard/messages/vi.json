@@ -1,0 +1,35 @@
+{
+  "Language": {
+    "lang": "vi",
+    "link": "/vi"
+  },
+  "LocaleLayout": { "title": "Cao đẳng Quốc Bảo" },
+  "DashboardPage": {
+    "general": "vi"
+  },
+  "Sidebar": {
+    "general": "Tổng quan",
+    "dashboard": "Trang tổng quan",
+    "website-content": "Nội dung website",
+    "post": "Bài viết (tin tức, thông báo)",
+    "banner": "Banner",
+    "create-post": "Đăng bài",
+    "student-list-and-registration": "Danh sách sinh viên và đăng ký",
+    "admission-registration": "Đăng ký xét tuyển",
+    "consultation-registration": "Đăng ký tư vấn",
+    "academic-data": "Dữ liệu học tập",
+    "form": "Biểu mẫu",
+    "training-program": "Chương trình đào tạo",
+    "document-and-regulation": "Tài liệu và văn bản",
+    "school-document": "Văn bản trường",
+    "regulation": "Quy chế – quy định",
+    "recruitment": "Tuyển dụng",
+    "staff-recruitment": "Tuyển dụng nhân sự",
+    "language": "Ngôn ngữ",
+    "multilingual": "Đa ngôn ngữ"
+  },
+  "LocaleSwitcher": {
+    "label": "🇻🇳 Tiếng Việt",
+    "locale": "{locale, select, vi {🇻🇳 Tiếng Việt} en {🇺🇸 Tiếng Anh} ko {🇰🇷 Tiếng Hàn} other {Không xác định}}"
+  }
+}

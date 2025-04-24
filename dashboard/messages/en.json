@@ -1,0 +1,35 @@
+{
+  "Language": {
+    "lang": "en",
+    "link": "/en"
+  },
+  "LocaleLayout": { "title": "Quoc Bao College" },
+  "DashboardPage": {
+    "general": "en"
+  },
+  "Sidebar": {
+    "general": "General",
+    "dashboard": "Dashboard",
+    "website-content": "Website Content",
+    "post": "Post (News, Announcements)",
+    "banner": "Banner",
+    "create-post": "Create Post",
+    "student-list-and-registration": "Student List and Registration",
+    "admission-registration": "Admission Registration",
+    "consultation-registration": "Consultation Registration",
+    "academic-data": "Academic Data",
+    "form": "Form",
+    "training-program": "Training Program",
+    "document-and-regulation": "Document and Regulation",
+    "school-document": "School Document",
+    "regulation": "Regulation",
+    "recruitment": "Recruitment",
+    "staff-recruitment": "Staff Recruitment",
+    "language": "Language",
+    "multilingual": "Multilingual"
+  },
+  "LocaleSwitcher": {
+    "label": "🇺🇸 English",
+    "locale": "{locale, select, vi {🇻🇳 Vietnam} en {🇺🇸 English} ko {🇰🇷 Korean} other {Unknown}}"
+  }
+}

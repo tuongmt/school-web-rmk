@@ -1,0 +1,152 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+}
+
+//Banner
+model Slide {
+    id          String   @id @default(auto()) @map("_id") @db.ObjectId
+    postId      String   @db.ObjectId
+    post        Post     @relation(fields: [postId], references: [id])
+    title       String
+    image       String
+    altName     String   @default("")
+    isActive    Boolean  @default(false)
+    description String   @default("")
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
+//Bài viết
+model Post {
+    id         String    @id @default(auto()) @map("_id") @db.ObjectId
+    slides     Slide[]
+    languageId String    @db.ObjectId
+    language   Language  @relation(fields: [languageId], references: [id])
+    image      String
+    title      String
+    content    String
+    tags       PostTag[]
+    categoryId String?   @db.ObjectId
+    category   Category? @relation(fields: [categoryId], references: [id])
+    isActive   Boolean
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @updatedAt
+}
+
+//Phân loại bài viết, vd: tin tuyển sinh, tin tức, sự kiện, ...
+model PostTag {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    postsId   String   @db.ObjectId
+    posts     Post     @relation(fields: [postsId], references: [id])
+    name      String
+    isActive  Boolean
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Language {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    name      String
+    code      String
+    posts     Post[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Category {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    name      String
+    posts     Post[]
+    isActive  Boolean  @default(true)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model User {
+    id        String     @id @default(auto()) @map("_id") @db.ObjectId
+    email     String     @unique
+    password  String?
+    userRoles UserRole[]
+    profile   Profile[]
+    isActive  Boolean
+    createdAt DateTime   @default(now())
+    updatedAt DateTime   @updatedAt
+}
+
+model Profile {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String   @db.ObjectId
+    name      String
+    jobTitle  String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Role {
+    id        String     @id @default(auto()) @map("_id") @db.ObjectId
+    name      String     @unique
+    userRoles UserRole[]
+    createdAt DateTime   @default(now())
+    updatedAt DateTime   @updatedAt
+}
+
+model UserRole {
+    id     String @id @default(auto()) @map("_id") @db.ObjectId
+    userId String @db.ObjectId
+    roleId String @db.ObjectId
+    user   User   @relation(fields: [userId], references: [id])
+    role   Role   @relation(fields: [roleId], references: [id])
+}
+
+//Đăng ký tuyển sinh
+model Registration {
+    id          String   @id @default(auto()) @map("_id") @db.ObjectId
+    studentId   String   @db.ObjectId
+    student     Student  @relation(fields: [studentId], references: [id])
+    program     String
+    formId      String
+    status      String   @default("pending")
+    dateApplied DateTime @default(now())
+}
+
+//Thông tin sv đăng ký tuyển sinh
+model Student {
+    id            String         @id @default(auto()) @map("_id") @db.ObjectId
+    name          String
+    email         String         @unique
+    phoneNumber   String
+    registrations Registration[]
+}
+
+//Văn bản thường, quy chế – quy định
+model Document {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    title     String
+    content   String
+    type      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+//Biểu mẫu
+model Form {
+    id         String   @id @default(auto()) @map("_id") @db.ObjectId
+    title      String
+    content    String
+    type       String   
+    isActive   Boolean
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+}

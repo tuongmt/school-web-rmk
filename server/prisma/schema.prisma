@@ -1,0 +1,319 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+}
+
+//Banner
+model Slide {
+    id          String   @id @default(auto()) @map("_id") @db.ObjectId
+    postId      String   @db.ObjectId
+    post        Post     @relation(fields: [postId], references: [id])
+    title       String
+    image       String
+    altName     String   @default("")
+    isActive    Boolean  @default(false)
+    description String   @default("")
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
+//Bài viết
+model Post {
+    id         String    @id @default(auto()) @map("_id") @db.ObjectId
+    slides     Slide[]
+    languageId String    @db.ObjectId
+    language   Language  @relation(fields: [languageId], references: [id])
+    author     String
+    image      String?
+    title      String
+    content    String
+    tags       PostTag[]
+    categoryId String    @db.ObjectId
+    category   Category  @relation(fields: [categoryId], references: [id])
+    isActive   Boolean
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @updatedAt
+}
+
+//Phân loại bài viết, vd: tin tuyển sinh, tin tức, sự kiện, ...
+model PostTag {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    postsId   String   @db.ObjectId
+    posts     Post     @relation(fields: [postsId], references: [id])
+    name      String
+    isActive  Boolean
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Language {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    name      String
+    code      String
+    posts     Post[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Category {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    name      String
+    posts     Post[]
+    parentId  String?  @db.ObjectId
+    isActive  Boolean  @default(true)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model User {
+    id               String       @id @default(auto()) @map("_id") @db.ObjectId
+    email            String       @unique
+    password         String?
+    roles            Role[]       @relation(fields: [roleIds], references: [id])
+    roleIds          String[]     @db.ObjectId
+    profile          Profile[]
+    faq              Faq[]
+    auditLogs        AuditLog[]
+    isActive         Boolean
+    twoFactorEnabled Boolean      @default(false)
+    twoFactorSecret  String?
+    createdAt        DateTime     @default(now())
+    updatedAt        DateTime     @updatedAt
+    subscribers      Subscriber[] @relation("UserSubscribers")
+    followEvent      Boolean?     @default(false)
+}
+
+model Profile {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String   @db.ObjectId
+    name      String
+    jobTitle  String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Role {
+    id            String       @id @default(auto()) @map("_id") @db.ObjectId
+    name          String       @unique
+    description   String?
+    permissions   Permission[] @relation(fields: [permissionIds], references: [id])
+    permissionIds String[]     @db.ObjectId
+    users         User[]       @relation(fields: [userIds], references: [id])
+    userIds       String[]     @db.ObjectId
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
+}
+
+model Permission {
+    id          String   @id @default(auto()) @map("_id") @db.ObjectId
+    name        String   @unique
+    description String?
+    roles       Role[]   @relation(fields: [roleIds], references: [id])
+    roleIds     String[] @db.ObjectId
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
+//Đăng ký tuyển sinh
+model Registration {
+    id          String    @id @default(auto()) @map("_id") @db.ObjectId
+    student     Student[]
+    major1      String
+    major2      String?
+    status      Status    @default(PENDING)
+    dateApplied DateTime  @default(now())
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+}
+
+model Major {
+    id         String   @id @default(auto()) @map("_id") @db.ObjectId
+    name       String
+    image      String
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+    detailId   String?  @unique @db.ObjectId  // Đảm bảo detailId là duy nhất
+    details    MajorDetail? @relation(fields: [detailId], references: [id]) // Khóa ngoại tới MajorDetail
+}
+
+model MajorDetail {
+    id                        String   @id @default(auto()) @map("_id") @db.ObjectId
+    description               String   // Khái quát về ngành
+    trainingStrengths         String   // Thế mạnh đào tạo của VLSC
+    advancedStudyOpportunities String  // Cơ hội học tập nâng cao
+    jobOpportunities          String   // Cơ hội việc làm
+    images                    String[] // Mảng hình ảnh
+    major                     Major?   // Quan hệ ngược về Major
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+enum Status {
+    PENDING
+    APPROVED
+    REJECTED
+}
+
+//Thông tin sv đăng ký tuyển sinh
+model Student {
+    id                 String       @id @default(auto()) @map("_id") @db.ObjectId
+    name               String
+    email              String       @unique
+    phoneNumber        String
+    CCCD               String
+    gender             Gender
+    graduationYear     Int
+    highSchoolProvince String
+    highSchoolName     String
+    registrationId     String       @db.ObjectId
+    registration       Registration @relation(fields: [registrationId], references: [id])
+}
+
+enum Gender {
+    MALE
+    FEMALE
+    OTHER
+}
+
+//đăng ký tư vấn
+model Consultation {
+    id          String   @id @default(auto()) @map("_id") @db.ObjectId
+    name        String
+    email       String   
+    phoneNumber String
+    status      Status   @default(PENDING)
+    dateApplied DateTime @default(now())
+    createdAt   DateTime @default(now())
+}
+
+//Văn bản thường, quy chế – quy định
+model Document {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    title     String
+    content   String
+    type      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+//Biểu mẫu
+model Form {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    title     String
+    content   String
+    type      String
+    isActive  Boolean  @default(true)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+//Tuyển dụng
+model RecruitmentProfile {
+    id          String   @id @default(auto()) @map("_id") @db.ObjectId
+    name        String
+    email       String   @unique
+    phoneNumber String
+    status      Status   @default(PENDING)
+    cv          String
+    message     String?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
+model Faq {
+    id          String   @id @default(auto()) @map("_id") @db.ObjectId
+    summary     String
+    description String
+    problem     Problem
+    file        String?
+    answer      String?
+    status      Status   @default(PENDING)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    userId      String?  @db.ObjectId
+    user        User?    @relation(fields: [userId], references: [id])
+}
+
+enum Problem {
+    CHUONG_TRINH_DAO_TAO
+    HOC_VU
+    HOC_PHI
+    GIAY_XAC_NHAN_SINH_VIEN
+    PHAN_ANH_CO_SO_VAT_CHAT
+    TOT_NGHIEP
+    BAO_LUU
+    LICH_THI
+    VAN_DE_KHAC
+    BHYT_BHTN
+    TAI_KHOAN_SINH_VIEN
+}
+
+//Liên hệ
+model Contact {
+    id          String   @id @default(auto()) @map("_id") @db.ObjectId
+    fullName    String
+    email       String   @unique
+    phoneNumber String
+    message     String
+    createdAt   DateTime @default(now())
+}
+
+model Event {
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  recurring   Boolean
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  tags        String 
+  subscribers SubscriberEvent[] @relation("EventSubscribers")
+}
+
+
+model Subscriber {
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  email       String           @unique
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  userId      String
+  user        User             @relation("UserSubscribers", fields: [userId], references: [id])
+  events      SubscriberEvent[] @relation("SubscriberEvents")
+}
+
+model SubscriberEvent {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  subscriberId String
+  eventId      String
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  subscriber   Subscriber @relation("SubscriberEvents", fields: [subscriberId], references: [id], onDelete: Cascade)
+  event        Event      @relation("EventSubscribers", fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([subscriberId, eventId]) 
+}
+
+
+//Audit log
+model AuditLog {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    model     String
+    action    String
+    data      Json
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String   @db.ObjectId
+    createdAt DateTime @default(now())
+}

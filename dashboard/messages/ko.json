@@ -1,0 +1,35 @@
+{
+  "Language": {
+    "lang": "ko",
+    "link": "/ko"
+  },
+  "LocaleLayout": { "title": "국 보 대학" },
+  "DashboardPage": {
+    "general": "ko"
+  },
+  "Sidebar": {
+    "general": "일반",
+    "dashboard": "대시보드",
+    "website-content": "웹사이트 콘텐츠",
+    "post": "게시물 (뉴스, 공지사항)",
+    "banner": "배너",
+    "create-post": "게시물 작성",
+    "student-list-and-registration": "학생 목록 및 등록",
+    "admission-registration": "입학 등록",
+    "consultation-registration": "상담 등록",
+    "academic-data": "학사 데이터",
+    "form": "양식",
+    "training-program": "교육 프로그램",
+    "document-and-regulation": "문서 및 규정",
+    "school-document": "학교 문서",
+    "regulation": "규정",
+    "recruitment": "채용",
+    "staff-recruitment": "인력 채용",
+    "language": "언어",
+    "multilingual": "다국어"
+  },
+  "LocaleSwitcher": {
+    "label": "🇰🇷 한국",
+    "locale": "{locale, select, vi {🇻🇳 베트남} en {🇺🇸 영어} ko {🇰🇷 한국어} other {알 수 없음}}"
+  }
+}

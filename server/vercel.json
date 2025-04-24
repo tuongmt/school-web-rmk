@@ -1,0 +1,12 @@
+{
+  "functions": {
+    "api/**/*.ts": {
+      "maxDuration": 10
+    }
+  },
+  "rewrites": [
+    { "source": "/documentation/:match*", "destination": "/documentation/:match*" },
+    { "source": "/(.*)", "destination": "/api" }
+  ],
+  "buildCommand": "prisma generate && npm run build"
+}
